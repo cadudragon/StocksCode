@@ -16,4 +16,9 @@
     <PackageReference Include="NSwag.MSBuild" Version="12.2.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\StocksCode.Common\StocksCode.Common.csproj" />
+    <ProjectReference Include="..\StocksCode.Infrastructure\StocksCode.Infrastructure.csproj" />
+    <ProjectReference Include="..\StocksCode.Persistence\StocksCode.Persistence.csproj" />
+  </ItemGroup>
 </Project>

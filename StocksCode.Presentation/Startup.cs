@@ -1,15 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
+using AutoMapper;
+using FluentValidation.AspNetCore;
+using MediatR;
+using MediatR.Pipeline;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using StocksCode.Application.CQRS.Users.Commands.CreateUserCommand;
+using StocksCode.Persistence;
 
 namespace StocksCode.Presentation
 {
@@ -25,7 +33,16 @@ namespace StocksCode.Presentation
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            //Add MediatR
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestPreProcessorBehavior<,>));
+            //services.AddMediatR(typeof(CreateEscortCommandHandler).GetTypeInfo().Assembly);
+
+            //Add DbContext using SQL Server Provider
+            services.AddDbContext<StocksCodeDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("StocksCodeDatabase")));
+
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateUserCommandValidator>()); ;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
