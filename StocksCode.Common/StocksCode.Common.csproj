@@ -7,4 +7,7 @@
   <ItemGroup>
     <None Remove=".DS_Store" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Helpers\" />
+  </ItemGroup>
 </Project>

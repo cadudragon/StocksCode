@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\StocksCode.Domain\StocksCode.Domain.csproj" />
+    <ProjectReference Include="..\StocksCode.Common\StocksCode.Common.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="8.1.0" />

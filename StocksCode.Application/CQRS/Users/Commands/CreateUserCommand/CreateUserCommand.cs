@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using StocksCode.Application.Interfaces;
+using StocksCode.Common.Helpers;
 using StocksCode.Domain.Entities;
 
 namespace StocksCode.Application.CQRS.Users.Commands.CreateUserCommand
@@ -11,6 +12,7 @@ namespace StocksCode.Application.CQRS.Users.Commands.CreateUserCommand
     {
         public string UserUserName { get; set; }
         public string UserPassword { get; set; }
+        public string Email { get; set; }
     }
 
     public class Handler : IRequestHandler<CreateUserCommand, Unit>
@@ -27,8 +29,12 @@ namespace StocksCode.Application.CQRS.Users.Commands.CreateUserCommand
 
         public async Task<Unit> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
-            var entity = new User{ Username =  request.UserUserName };
-            _context.Users.Add(entity);
+
+            EncryptionHelper.CreatePasswordHash(request.UserPassword, out byte[] passwordhash, out byte[] passwordSalt);
+
+            var entity = new User{ Username =  request.UserUserName, PasswordHash = passwordhash, PasswordSalt = passwordSalt };
+
+            await _context.Users.AddAsync(entity);
             await _context.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;

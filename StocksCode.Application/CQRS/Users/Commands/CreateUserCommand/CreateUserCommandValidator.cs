@@ -9,6 +9,7 @@ namespace StocksCode.Application.CQRS.Users.Commands.CreateUserCommand
         {
             RuleFor(x => x.UserUserName).MinimumLength(6).NotEmpty();
             RuleFor(x => x.UserPassword).MinimumLength(8).NotEmpty();
+            RuleFor(x => x.Email).EmailAddress();
         }
     }
 }
