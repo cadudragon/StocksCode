@@ -20,5 +20,7 @@
     <Folder Include="CQRS\Users\" />
     <Folder Include="CQRS\Fundamental\" />
     <Folder Include="Interfaces\" />
+    <Folder Include="CQRS\Users\Queries\" />
+    <Folder Include="CQRS\Users\Queries\GetUser\" />
   </ItemGroup>
 </Project>

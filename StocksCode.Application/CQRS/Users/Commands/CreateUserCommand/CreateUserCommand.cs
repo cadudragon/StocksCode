@@ -11,8 +11,8 @@ namespace StocksCode.Application.CQRS.Users.Commands.CreateUserCommand
     public class CreateUserCommand : IRequest
     {
         public string UserUserName { get; set; }
-        public string UserPassword { get; set; }
         public string Email { get; set; }
+        public string UserPassword { get; set; }
     }
 
     public class Handler : IRequestHandler<CreateUserCommand, Unit>
@@ -28,11 +28,11 @@ namespace StocksCode.Application.CQRS.Users.Commands.CreateUserCommand
         }
 
         public async Task<Unit> Handle(CreateUserCommand request, CancellationToken cancellationToken)
-        {
+        { 
 
             EncryptionHelper.CreatePasswordHash(request.UserPassword, out byte[] passwordhash, out byte[] passwordSalt);
 
-            var entity = new User{ Username =  request.UserUserName, PasswordHash = passwordhash, PasswordSalt = passwordSalt };
+            var entity = new User{ Username =  request.UserUserName, Email= request.Email, PasswordHash = passwordhash, PasswordSalt = passwordSalt };
 
             await _context.Users.AddAsync(entity);
             await _context.SaveChangesAsync(cancellationToken);
