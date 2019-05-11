@@ -15,12 +15,12 @@ namespace StocksCode.Application.CQRS.Users.Commands.CreateUserCommand
         public string UserPassword { get; set; }
     }
 
-    public class Handler : IRequestHandler<CreateUserCommand, Unit>
+    public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand>
     {
         private readonly IStocksCodeDbContext _context;
         private readonly IMediator _mediator;
 
-        public Handler(IStocksCodeDbContext context, IMediator mediator)
+        public CreateUserCommandHandler(IStocksCodeDbContext context, IMediator mediator)
         {
             _context = context;
             _mediator = mediator;

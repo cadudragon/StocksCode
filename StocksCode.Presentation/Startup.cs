@@ -17,6 +17,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using StocksCode.Application.CQRS.Users.Commands.CreateUserCommand;
+using StocksCode.Application.Interfaces;
 using StocksCode.Persistence;
 
 namespace StocksCode.Presentation
@@ -35,10 +36,10 @@ namespace StocksCode.Presentation
         {
             //Add MediatR
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestPreProcessorBehavior<,>));
-            //services.AddMediatR(typeof(CreateEscortCommandHandler).GetTypeInfo().Assembly);
+            services.AddMediatR(typeof(CreateUserCommandHandler).GetTypeInfo().Assembly);
 
             //Add DbContext using SQL Server Provider
-            services.AddDbContext<StocksCodeDbContext>(options =>
+            services.AddDbContext<IStocksCodeDbContext,StocksCodeDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("StocksCodeDatabase")));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)

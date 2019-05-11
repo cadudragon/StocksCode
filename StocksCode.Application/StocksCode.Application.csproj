@@ -22,5 +22,6 @@
     <Folder Include="Interfaces\" />
     <Folder Include="CQRS\Users\Queries\" />
     <Folder Include="CQRS\Users\Queries\GetUser\" />
+    <Folder Include="Exceptions\" />
   </ItemGroup>
 </Project>
