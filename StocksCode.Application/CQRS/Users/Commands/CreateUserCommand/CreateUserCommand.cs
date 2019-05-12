@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -8,14 +10,14 @@ using StocksCode.Domain.Entities;
 
 namespace StocksCode.Application.CQRS.Users.Commands.CreateUserCommand
 {
-    public class CreateUserCommand : IRequest
+    public class CreateUserCommand : IRequest<HttpResponseHelper>
     {
         public string UserUserName { get; set; }
         public string Email { get; set; }
         public string UserPassword { get; set; }
     }
 
-    public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand>
+    public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, HttpResponseHelper>
     {
         private readonly IStocksCodeDbContext _context;
         private readonly IMediator _mediator;
@@ -27,17 +29,33 @@ namespace StocksCode.Application.CQRS.Users.Commands.CreateUserCommand
 
         }
 
-        public async Task<Unit> Handle(CreateUserCommand request, CancellationToken cancellationToken)
-        { 
+        public async Task<HttpResponseHelper> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                EncryptionHelper.CreatePasswordHash(request.UserPassword, out byte[] passwordhash, out byte[] passwordSalt);
 
-            EncryptionHelper.CreatePasswordHash(request.UserPassword, out byte[] passwordhash, out byte[] passwordSalt);
+                var entity = new User { Username = request.UserUserName, Email = request.Email, PasswordHash = passwordhash, PasswordSalt = passwordSalt };
 
-            var entity = new User{ Username =  request.UserUserName, Email= request.Email, PasswordHash = passwordhash, PasswordSalt = passwordSalt };
+                await _context.Users.AddAsync(entity);
+                await _context.SaveChangesAsync(cancellationToken);
 
-            await _context.Users.AddAsync(entity);
-            await _context.SaveChangesAsync(cancellationToken);
 
-            return Unit.Value;
+                return new HttpResponseHelper (" User Created", HttpStatusCode.Created);
+            }
+            catch (Exception ex)
+            {
+                var asdf = ex.HResult;
+
+                switch (ex.HResult)
+                {
+                    case -2146233088:
+                        return new HttpResponseHelper("There is already a user with those credentials.",  HttpStatusCode.Conflict);
+                    default:
+                        return new HttpResponseHelper("Something went wrong.", HttpStatusCode.InternalServerError);
+
+                }
+            }
         }
     }
 
