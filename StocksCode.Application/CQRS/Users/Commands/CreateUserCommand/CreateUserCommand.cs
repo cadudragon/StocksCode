@@ -41,7 +41,7 @@ namespace StocksCode.Application.CQRS.Users.Commands.CreateUserCommand
                 await _context.SaveChangesAsync(cancellationToken);
 
 
-                return new HttpResponseHelper (" User Created", HttpStatusCode.Created);
+                return new HttpResponseHelper (HttpStatusCode.Created);
             }
             catch (Exception ex)
             {
@@ -50,9 +50,9 @@ namespace StocksCode.Application.CQRS.Users.Commands.CreateUserCommand
                 switch (ex.HResult)
                 {
                     case -2146233088:
-                        return new HttpResponseHelper("There is already a user with those credentials.",  HttpStatusCode.Conflict);
+                        return new HttpResponseHelper(HttpStatusCode.Conflict);
                     default:
-                        return new HttpResponseHelper("Something went wrong.", HttpStatusCode.InternalServerError);
+                        return new HttpResponseHelper(HttpStatusCode.InternalServerError);
 
                 }
             }

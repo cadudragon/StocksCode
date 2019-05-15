@@ -14,9 +14,11 @@ namespace StocksCode.Common.Helpers
     /// </summary>
     public class HttpResponseHelper 
     {
-        public HttpResponseHelper()
+    
+        public HttpResponseHelper(HttpStatusCode statusCode)
         {
-
+            Message = statusCode.ToString();
+            StatusCode = statusCode;
         }
 
         public HttpResponseHelper(string message, HttpStatusCode statusCode)

@@ -8,7 +8,7 @@ using StocksCode.Common.Helpers;
 
 namespace StocksCode.Application.CQRS.Users.Queries.GetUser
 {
-    public class LoginUserHandler : IRequestHandler<LoginUserQuery, UserDetailDTO>
+    public class LoginUserHandler : IRequestHandler<LoginUserQuery, HttpResponseHelper>
     {
         private readonly IStocksCodeDbContext _context;
 
@@ -17,16 +17,17 @@ namespace StocksCode.Application.CQRS.Users.Queries.GetUser
             _context = context;
         }
 
-        public async Task<UserDetailDTO> Handle(LoginUserQuery request, CancellationToken cancellationToken)
+        public async Task<HttpResponseHelper> Handle(LoginUserQuery request, CancellationToken cancellationToken)
         {
             var user = await _context.Users.FirstOrDefaultAsync();
             if (user == null)
-                return new UserDetailDTO { StatusCode = System.Net.HttpStatusCode.Unauthorized, Message = "Invalid Credentials."};
+                return new HttpResponseHelper(System.Net.HttpStatusCode.Unauthorized);
+
 
             if (!EncryptionHelper.VerifyPassword(request.Password, user.PasswordHash, user.PasswordSalt))
-                return new UserDetailDTO { StatusCode = System.Net.HttpStatusCode.Unauthorized, Message = "Invalid Credentials." };
+                return new HttpResponseHelper(System.Net.HttpStatusCode.Unauthorized);
 
-            return UserDetailDTO.Create(user);
+            return new HttpResponseHelper(UserDetailDTO.Create(user), System.Net.HttpStatusCode.OK);
 
         }
     }

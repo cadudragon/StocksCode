@@ -9,6 +9,7 @@ namespace StocksCode.Persistence.Configurations
         public void Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<User> builder)
         {
             builder.HasIndex(p => p.Username).IsUnique();
+            builder.HasIndex(p => p.Email).IsUnique();
         }
     }
 }
