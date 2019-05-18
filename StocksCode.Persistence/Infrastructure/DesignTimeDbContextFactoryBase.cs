@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
+using StocksCode.Common.Helpers;
 using System;
 using System.IO;
 
@@ -14,7 +15,7 @@ namespace StocksCode.Persistence.Infrastructure
 
         public TContext CreateDbContext(string[] args)
         {
-            var basePath = Directory.GetCurrentDirectory() + string.Format("{0}..{0}StocksCode.Presentation", Path.DirectorySeparatorChar);
+            var basePath = "StocksCode.Presentation";
             return Create(basePath, Environment.GetEnvironmentVariable(AspNetCoreEnvironment));
         }
 
@@ -23,15 +24,10 @@ namespace StocksCode.Persistence.Infrastructure
         private TContext Create(string basePath, string environmentName)
         {
 
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(basePath)
-                .AddJsonFile("appsettings.json")
-                .AddJsonFile($"appsettings.Local.json", optional: true)
-                .AddJsonFile($"appsettings.{environmentName}.json", optional: true)
-                .AddEnvironmentVariables()
-                .Build();
+            var confHelper = ConfigurationHelper.
+              GetJsonConfigurationByRelativePath(basePath, environmentName);
 
-            var connectionString = configuration.GetConnectionString(ConnectionStringName);
+            var connectionString = confHelper.GetConnectionString(ConnectionStringName);
 
             return Create(connectionString);
         }

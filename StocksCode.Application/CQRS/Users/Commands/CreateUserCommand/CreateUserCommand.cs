@@ -13,7 +13,16 @@ namespace StocksCode.Application.CQRS.Users.Commands.CreateUserCommand
     public class CreateUserCommand : IRequest<HttpResponseHelper>
     {
         public string UserUserName { get; set; }
-        public string Email { get; set; }
+        public string Email {
+            get { return Email; }
+            set
+            {
+                if (!string.IsNullOrEmpty(value))
+                    Email = value.ToLower();
+                else
+                    Email = value;
+            }
+        }
         public string UserPassword { get; set; }
     }
 
@@ -33,7 +42,7 @@ namespace StocksCode.Application.CQRS.Users.Commands.CreateUserCommand
         {
             try
             {
-                EncryptionHelper.CreatePasswordHash(request.UserPassword, out byte[] passwordhash, out byte[] passwordSalt);
+                AuthenticationHelper.CreatePasswordHash(request.UserPassword, out byte[] passwordhash, out byte[] passwordSalt);
 
                 var entity = new User { Username = request.UserUserName, Email = request.Email, PasswordHash = passwordhash, PasswordSalt = passwordSalt };
 
@@ -45,8 +54,6 @@ namespace StocksCode.Application.CQRS.Users.Commands.CreateUserCommand
             }
             catch (Exception ex)
             {
-                var asdf = ex.HResult;
-
                 switch (ex.HResult)
                 {
                     case -2146233088:

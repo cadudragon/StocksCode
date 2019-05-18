@@ -12,34 +12,33 @@ namespace StocksCode.Common.Helpers
     /// <summary>
     /// Helper to create HttpResponses outside controllers.
     /// </summary>
-    public class HttpResponseHelper 
+    public class HttpResponseHelper
     {
-    
+
+        public object ObjectResponse { get; set; }
+        public HttpStatusCode StatusCode { get; set; }
+
         public HttpResponseHelper(HttpStatusCode statusCode)
         {
-            Message = statusCode.ToString();
+            ObjectResponse = new { title = Enum.GetName(typeof(HttpStatusCode), statusCode) };
             StatusCode = statusCode;
         }
 
         public HttpResponseHelper(string message, HttpStatusCode statusCode)
         {
-            Message = message;
+            ObjectResponse = new { title = message };
             StatusCode = statusCode;
         }
-
 
         public HttpResponseHelper(object obj, HttpStatusCode statusCode)
         {
-            Message = JsonConvert.SerializeObject(obj);
+            ObjectResponse = obj;
             StatusCode = statusCode;
         }
 
-        public string Message { get; set; }
-        public HttpStatusCode StatusCode { get; set; }
-
         public ObjectResult GetObjectResult()
         {
-            ObjectResult result = new ObjectResult(Message)
+            ObjectResult result = new ObjectResult(ObjectResponse)
             {
                 StatusCode = (int?)StatusCode
             };

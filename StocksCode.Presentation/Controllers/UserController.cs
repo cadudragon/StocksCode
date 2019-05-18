@@ -17,10 +17,10 @@ namespace StocksCode.Presentation.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<UserDetailDTO>> Login([FromQuery] LoginUserQuery command) {
+        public async Task<IActionResult> Login([FromQuery] LoginUserQuery command) 
+        {
             var response = await Mediator.Send(command);
             return response.GetObjectResult();
-
         }
     }
 }

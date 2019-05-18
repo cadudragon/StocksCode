@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using FluentValidation.AspNetCore;
 using MediatR;
 using MediatR.Pipeline;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -16,6 +18,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using StocksCode.Application.CQRS.Users.Commands.CreateUserCommand;
 using StocksCode.Application.Interfaces;
 using StocksCode.Persistence;
@@ -39,11 +42,26 @@ namespace StocksCode.Presentation
             services.AddMediatR(typeof(CreateUserCommandHandler).GetTypeInfo().Assembly);
 
             //Add DbContext using SQL Server Provider
-            services.AddDbContext<IStocksCodeDbContext,StocksCodeDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("StocksCodeDatabase")));
+            services.AddDbContext<IStocksCodeDbContext, StocksCodeDbContext>(options =>
+                 options.UseSqlServer(Configuration.GetConnectionString("StocksCodeDatabase")));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateUserCommandValidator>()); ;
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateUserCommandValidator>());
+
+            //Add Jwt Auth layer
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options => options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
+                    .GetBytes(Configuration.GetSection("AppSettings:SecretKey").Value)),
+                    ValidateIssuer = false,
+                    //ValidIssuer = "https://issuer.example.com",
+                    ValidateAudience = false,
+                    //ValidAudience = "https://yourapplication.example.com",
+
+                    ValidateLifetime = true
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -60,6 +78,7 @@ namespace StocksCode.Presentation
             }
 
             app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseMvc();
         }
     }
