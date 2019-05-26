@@ -22,6 +22,7 @@ using Microsoft.IdentityModel.Tokens;
 using StocksCode.Application.CQRS.Users.Commands.CreateUserCommand;
 using StocksCode.Application.Interfaces;
 using StocksCode.Persistence;
+using NSwag;
 
 namespace StocksCode.Presentation
 {
@@ -62,6 +63,10 @@ namespace StocksCode.Presentation
 
                     ValidateLifetime = true
                 });
+
+
+            services.AddOpenApiDocument(document => document.DocumentName = "a");
+            services.AddSwaggerDocument(document => document.DocumentName = "b");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -77,9 +82,26 @@ namespace StocksCode.Presentation
                 app.UseHsts();
             }
 
+
             app.UseHttpsRedirection();
             app.UseAuthentication();
+            //TODO: Add protection before publish on production
+            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+
             app.UseMvc();
+
+            // Add middlewares to service the OpenAPI/Swagger document and the web UI
+
+            // URLs: 
+            // - http://localhost:32367/swagger/a/swagger.json
+            // - http://localhost:32367/swagger/b/swagger.json
+            // - http://localhost:32367/swagger
+
+            if (!env.IsProduction()) 
+            {
+                app.UseSwagger(); // registers the two documents in separate routes
+                app.UseSwaggerUi3(); // registers a single Swagger UI (v3) with the two documents
+            }
         }
     }
 }

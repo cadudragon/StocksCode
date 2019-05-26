@@ -10,6 +10,7 @@ namespace StocksCode.Persistence.Configurations
         {
             builder.HasIndex(p => p.Username).IsUnique();
             builder.HasIndex(p => p.Email).IsUnique();
+            builder.Property(p => p.Email).IsRequired();
         }
     }
 }

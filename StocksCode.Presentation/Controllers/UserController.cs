@@ -16,8 +16,8 @@ namespace StocksCode.Presentation.Controllers
             return response.GetObjectResult();
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Login([FromQuery] LoginUserQuery command) 
+        [HttpPost]
+        public async Task<IActionResult> Login([FromBody] LoginUserQuery command) 
         {
             var response = await Mediator.Send(command);
             return response.GetObjectResult();

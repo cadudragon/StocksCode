@@ -13,6 +13,9 @@ namespace StocksCode.Persistence
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Company> Companies { get; set; }
+        public DbSet<Sector> Sectors { get; set; }
+        public DbSet<Subsector> Subsectors { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

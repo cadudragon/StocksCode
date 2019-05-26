@@ -25,11 +25,12 @@ namespace StocksCode.Persistence.Infrastructure
         {
 
             var confHelper = ConfigurationHelper.
-              GetJsonConfigurationByRelativePath(basePath, environmentName);
+               GetJsonConfigurationByRelativePath(basePath, environmentName ?? AspNetCoreEnvironment);
 
             var connectionString = confHelper.GetConnectionString(ConnectionStringName);
 
             return Create(connectionString);
+
         }
 
         private TContext Create(string connectionString)
