@@ -23,6 +23,14 @@
     <Folder Include="CQRS\Users\Queries\" />
     <Folder Include="CQRS\Users\Queries\GetUser\" />
     <Folder Include="Exceptions\" />
+    <Folder Include="CQRS\Companies\" />
+    <Folder Include="CQRS\Companies\Queries\" />
+    <Folder Include="CQRS\Companies\Queries\GetCompanyList\" />
+    <Folder Include="CQRS\Users\Models\" />
+    <Folder Include="CQRS\Companies\Models\" />
+    <Folder Include="Interfaces\Mapping\" />
+    <Folder Include="Infrastructure\" />
+    <Folder Include="Infrastructure\AutoMapper\" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.IdentityModel.Tokens">

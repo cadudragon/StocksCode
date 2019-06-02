@@ -23,6 +23,7 @@ using StocksCode.Application.CQRS.Users.Commands.CreateUserCommand;
 using StocksCode.Application.Interfaces;
 using StocksCode.Persistence;
 using NSwag;
+using StocksCode.Application.Infrastructure.AutoMapper;
 
 namespace StocksCode.Presentation
 {
@@ -38,6 +39,9 @@ namespace StocksCode.Presentation
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Add AutoMapper
+            services.AddAutoMapper(new Assembly[] { typeof(AutoMapperProfile).GetTypeInfo().Assembly });
+
             //Add MediatR
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestPreProcessorBehavior<,>));
             services.AddMediatR(typeof(CreateUserCommandHandler).GetTypeInfo().Assembly);
@@ -45,6 +49,8 @@ namespace StocksCode.Presentation
             //Add DbContext using SQL Server Provider
             services.AddDbContext<IStocksCodeDbContext, StocksCodeDbContext>(options =>
                  options.UseSqlServer(Configuration.GetConnectionString("StocksCodeDatabase")));
+
+            services.AddCors();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateUserCommandValidator>());
@@ -79,13 +85,14 @@ namespace StocksCode.Presentation
             else
             {
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
+                //app.UseHsts();
             }
 
+            //app.UseHttpsRedirection();
 
-            app.UseHttpsRedirection();
             app.UseAuthentication();
             //TODO: Add protection before publish on production
+
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
             app.UseMvc();

@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using StocksCode.Common.Helpers;
 using StocksCode.Domain.Entities;
 
-namespace StocksCode.Application.CQRS.Users.Queries.GetUser
+namespace StocksCode.Application.CQRS.Users.Models
 {
     public class UserDetailDTO 
     {

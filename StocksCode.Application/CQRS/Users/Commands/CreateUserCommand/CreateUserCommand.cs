@@ -12,18 +12,9 @@ namespace StocksCode.Application.CQRS.Users.Commands.CreateUserCommand
 {
     public class CreateUserCommand : IRequest<HttpResponseHelper>
     {
-        public string UserUserName { get; set; }
-        public string Email {
-            get { return Email; }
-            set
-            {
-                if (!string.IsNullOrEmpty(value))
-                    Email = value.ToLower();
-                else
-                    Email = value;
-            }
-        }
-        public string UserPassword { get; set; }
+        public string UserName { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
     }
 
     public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, HttpResponseHelper>
@@ -42,9 +33,9 @@ namespace StocksCode.Application.CQRS.Users.Commands.CreateUserCommand
         {
             try
             {
-                AuthenticationHelper.CreatePasswordHash(request.UserPassword, out byte[] passwordhash, out byte[] passwordSalt);
+                AuthenticationHelper.CreatePasswordHash(request.Password, out byte[] passwordhash, out byte[] passwordSalt);
 
-                var entity = new User { Username = request.UserUserName, Email = request.Email, PasswordHash = passwordhash, PasswordSalt = passwordSalt };
+                var entity = new User { Username = request.UserName, Email = request.Email, PasswordHash = passwordhash, PasswordSalt = passwordSalt };
 
                 await _context.Users.AddAsync(entity);
                 await _context.SaveChangesAsync(cancellationToken);
